@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    {% include "banner.html" %}
+
+    <!-- ОСТАННІ НОВИНИ -->
+    <div class="mb-5">
+        <h2 class="section-title">Останні новини</h2>
+        <div class="row g-4">
+            {% if latest_news %}
+                {% for post in latest_news %}
+                <div class="col-md-4">
+                    <div class="card h-100">
+                        {% if post['image'] and '/' in post['image'] %}
+                        <img src="/static/{{ post['image'] }}" class="card-img-top" alt="{{ post['title'] }}">
+                        {% elif post['image'] %}
+                        <img src="/static/uploads/{{ post['image'] }}" class="card-img-top" alt="{{ post['title'] }}">
+                        {% else %}
+                        <img src="/static/images/programming.png" class="card-img-top" alt="Новина">
+                        {% endif %}
+                        <div class="card-body">
+                            <span class="category-pill">{{ post['category_name'] }}</span>
+                            <h5 class="card-title">{{ post['title'] }}</h5>
+                            <p class="text-muted">{{ post['text']|truncate(90, True, '...') }}</p>
+                            <a href="/post/view/{{ post['post_id'] }}" class="btn btn-outline-primary btn-sm">Читати далі →</a>
+                        </div>
+                        <div class="card-footer">
+                            <span>{{ post['datetime'] }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">Постів ще немає — додай перший на сторінці категорії.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

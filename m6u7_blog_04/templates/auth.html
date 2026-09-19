@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold gradient-text">Вхід</h1>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-6 mx-auto">
+            {% include "errors.html" %}
+
+            <div class="card">
+                <div class="card-body p-4">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="login" class="form-label">Логін</label>
+                            <input type="text" name="login" id="login" class="form-control" value="{{ request.form['login'] if request.form else '' }}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Пароль</label>
+                            <input type="password" name="password" id="password" class="form-control">
+                        </div>
+
+                        <div class="mb-3">
+                            <input type="submit" class="btn btn-primary btn-lg" value="Увійти">
+                        </div>
+                    </form>
+
+                    <p class="text-muted mb-0">Немає акаунта? <a href="/register">Зареєструватися</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

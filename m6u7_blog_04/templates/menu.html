@@ -1,0 +1,52 @@
+<header>
+  <nav class="navbar navbar-expand-lg" data-bs-theme="dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/">⚡ GAME<span style="color:#7FB0FF">BLOG</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav me-auto">
+          {% for item_name, path in [
+              ('Головна', '/'),
+              ('Новини', '/post/category/news'),
+              ('Огляди', '/post/category/reviews'),
+              ('Гайди', '/post/category/guides'),
+              ('Кіберспорт', '/post/category/esports'),
+              ('Топ ігор', '/post/category/top'),
+              ('Про проєкт', '/about')
+          ] %}
+          <li class="nav-item">
+            <a class="nav-link {% if request.path == path %}active{% endif %}" href="{{ path }}">{{ item_name }}</a>
+          </li>
+          {% endfor %}
+        </ul>
+
+        <ul class="navbar-nav">
+          {% if me %}
+          <li class="nav-item dropdown">
+            <a class="nav-link nav-avatar-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <img src="{{ url_for('static', filename='images/' + me.image) if me.image else url_for('static', filename='images/programming.png') }}"
+                   class="nav-avatar" alt="{{ me.name }}">
+              <span class="nav-avatar-name">{{ me.name }}</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li><a class="dropdown-item" href="/user/{{ me.user_id }}">Мій профіль</a></li>
+              <li><a class="dropdown-item" href="/user/edit">Налаштування</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="/out">Вийти</a></li>
+            </ul>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="/auth">Вхід</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/register">Реєстрація</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="container">
+    <div class="text-center mb-5">
+        <h1 class="display-4 fw-bold gradient-text">{{ category['category_name'] }}</h1>
+        <p class="lead text-muted">Статті в цій категорії</p>
+    </div>
+
+    {% include "errors.html" %}
+
+    <div class="row g-4">
+    {% for post in posts %}
+        <div class="col-md-4">
+            <div class="card h-100">
+                {% if post['image'] and '/' in post['image'] %}
+                <img src="/static/{{ post['image'] }}" class="card-img-top" alt="{{ post['title'] }}">
+                {% elif post['image'] %}
+                <img src="/static/uploads/{{ post['image'] }}" class="card-img-top" alt="{{ post['title'] }}">
+                {% else %}
+                <img src="/static/images/programming.png" class="card-img-top" alt="{{ post['title'] }}">
+                {% endif %}
+                <div class="card-body">
+                    <span class="category-pill">{{ category['category_name'] }}</span>
+                    <h5 class="card-title">{{ post['title'] }}</h5>
+                    <p class="text-muted">{{ post['text']|truncate(100, True, '...') }}</p>
+
+                    {% if post['user_id'] %}
+                    <a href="/user/{{ post['user_id'] }}" class="author-chip mb-3">
+                        <img src="{{ url_for('static', filename='images/' + post['author_image']) if post['author_image'] else url_for('static', filename='images/programming.png') }}" alt="{{ post['author_name'] }}">
+                        <span>{{ post['author_name'] }}</span>
+                    </a>
+                    {% endif %}
+
+                    <a href="/post/view/{{ post['post_id'] }}" class="btn btn-outline-primary btn-sm d-block">Читати далі →</a>
+                </div>
+                <div class="card-footer">
+                    <span>{{ post['datetime'] }}</span>
+                    {% if me and me.user_id == post['user_id'] %}
+                    <button type="button" class="btn btn-outline-secondary btn-sm" style="padding: 2px 10px;"
+                            data-bs-toggle="modal" data-bs-target="#deleteModal{{ post['post_id'] }}">
+                        Видалити
+                    </button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        {% if me and me.user_id == post['user_id'] %}
+        <div class="modal fade" id="deleteModal{{ post['post_id'] }}" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <form method="POST" action="/post/delete/{{ post['post_id'] }}">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Видалення поста</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="mb-2">«{{ post['title'] }}»</p>
+                            <p class="text-muted">Введіть пароль підтвердження, щоб видалити пост.</p>
+                            <input type="password" name="delete_password" class="form-control" placeholder="Пароль" required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Скасувати</button>
+                            <button type="submit" class="btn btn-primary btn-sm">Видалити</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+
+    {% if me %}
+    <div class="card mt-5">
+      <div class="card-body p-4">
+        <h3 class="card-title">Додавання статті</h3>
+        <hr style="border-color: var(--border-soft);">
+        <form method="POST" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label for="title" class="form-label">Заголовок</label>
+            <input type="text" name="title" id="title" class="form-control" maxlength="100" value="{{ request.form['title'] if request.form else '' }}">
+          </div>
+          <div class="mb-3">
+            <label for="image" class="form-label">Обкладинка</label>
+            <input type="file" name="image" id="image" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label for="post" class="form-label">Текст</label>
+            <textarea name="post" id="post" class="form-control" rows="5" maxlength="1000">{{ request.form['post'] if request.form else '' }}</textarea>
+          </div>
+          <div class="mb-3">
+            <input type="submit" class="btn btn-primary btn-lg" value="Опублікувати">
+          </div>
+        </form>
+      </div>
+    </div>
+    {% else %}
+    <div class="card mt-5">
+      <div class="card-body p-4 text-center">
+        <p class="mb-0 text-muted">
+          Щоб додавати статті, <a href="/auth">увійдіть</a> або <a href="/register">зареєструйтесь</a>.
+        </p>
+      </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

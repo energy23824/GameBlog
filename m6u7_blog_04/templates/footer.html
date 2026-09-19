@@ -1,0 +1,49 @@
+<footer>
+    <div class="container">
+        <div class="footer-top">
+            <div class="footer-brand-col">
+                <div class="footer-logo mb-2">⚡ GAMEBLOG</div>
+                <p class="footer-tagline">
+                    Новини, огляди, гайди та кіберспорт — все про ігри в одному місці.
+                </p>
+                <div class="footer-socials">
+                    <a href="#" class="social-icon" title="Discord">D</a>
+                    <a href="#" class="social-icon" title="Telegram">T</a>
+                    <a href="#" class="social-icon" title="YouTube">Y</a>
+                    <a href="#" class="social-icon" title="X">X</a>
+                </div>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Розділи</h5>
+                <a href="/post/category/news">Новини</a>
+                <a href="/post/category/reviews">Огляди</a>
+                <a href="/post/category/guides">Гайди</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Спільнота</h5>
+                <a href="/post/category/esports">Кіберспорт</a>
+                <a href="/post/category/top">Топ ігор</a>
+                <a href="/about">Про проєкт</a>
+            </div>
+
+            <div class="footer-links-col">
+                <h5>Акаунт</h5>
+                {% if me %}
+                <a href="/user/{{ me.user_id }}">Мій профіль</a>
+                <a href="/user/edit">Налаштування</a>
+                <a href="/out">Вийти</a>
+                {% else %}
+                <a href="/auth">Вхід</a>
+                <a href="/register">Реєстрація</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <span>© 2026 <b>GameBlog</b>. Усі права захищені.</span>
+            <span>contact@gameblog.ua</span>
+        </div>
+    </div>
+</footer>

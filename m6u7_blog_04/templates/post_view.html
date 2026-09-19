@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block body %}
+<div class="container">
+    <div class="mb-3 mt-3 d-flex justify-content-between align-items-center">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary btn-sm">← Назад</a>
+        {% if me and me.user_id == post['user_id'] %}
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal">
+            Видалити пост
+        </button>
+        {% endif %}
+    </div>
+
+    {% include "errors.html" %}
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <h1 class="fw-bold gradient-text mb-1">{{ post['title'] if post['title'] else 'Стаття' }}</h1>
+            <p class="text-muted mb-3">
+                {% if category %}Категорія: {{ category['category_name'] }} · {% endif %}{{ post['datetime'] }}
+            </p>
+
+            {% if post['user_id'] %}
+            <a href="/user/{{ post['user_id'] }}" class="author-chip mb-4">
+                <img src="{{ url_for('static', filename='images/' + post['author_image']) if post['author_image'] else url_for('static', filename='images/programming.png') }}" alt="{{ post['author_name'] }}">
+                <span>{{ post['author_name'] }}</span>
+            </a>
+            {% endif %}
+
+            <div class="card mb-4">
+                <div class="card-body p-4">
+                    <div class="card-text fs-5">
+                        {{ post['text'] }}
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-block">
+                <h5>Коментарі ({{ comments|length }})</h5>
+                {% for c in comments %}
+                <div class="comment-item">
+                    <a href="/user/{{ c['user_id'] }}" class="author-chip">
+                        <img src="{{ url_for('static', filename='images/' + c['author_image']) if c['author_image'] else url_for('static', filename='images/programming.png') }}" alt="{{ c['author_name'] }}">
+                        <span>{{ c['author_name'] }}</span>
+                    </a>
+                    <div class="mt-2">{{ c['text'] }}</div>
+                    <small class="text-muted">{{ c['datetime'] }}</small>
+                </div>
+                {% else %}
+                <p class="text-muted mb-0">Поки що немає коментарів — будь першим!</p>
+                {% endfor %}
+
+                {% if me %}
+                <form class="mt-3" method="POST">
+                    <textarea name="comment" class="form-control mb-2" rows="3" placeholder="Твій коментар..." required></textarea>
+                    <button type="submit" class="btn btn-primary btn-sm">Надіслати</button>
+                </form>
+                {% else %}
+                <p class="text-muted mt-3 mb-0">
+                    Щоб залишити коментар, <a href="/auth">увійдіть</a> або <a href="/register">зареєструйтесь</a>.
+                </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                {% set fallback_images = ['programming.png', 'creative.jpg', 'guitar.jpg'] %}
+                {% if post['image'] and '/' in post['image'] %}
+                <img src="/static/{{ post['image'] }}" class="card-img-top post-cover-img" alt="{{ post['title'] }}">
+                {% elif post['image'] %}
+                <img src="/static/uploads/{{ post['image'] }}" class="card-img-top post-cover-img" alt="{{ post['title'] }}">
+                {% else %}
+                <img src="/static/images/{{ fallback_images[post['post_id'] % fallback_images|length] }}" class="card-img-top post-cover-img" alt="{{ post['title'] }}">
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if me and me.user_id == post['user_id'] %}
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <form method="POST" action="/post/delete/{{ post['post_id'] }}">
+                <div class="modal-header">
+                    <h5 class="modal-title">Видалення поста</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Щоб видалити пост, введіть пароль підтвердження.</p>
+                    <input type="password" name="delete_password" class="form-control" placeholder="Пароль" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-dismiss="modal">Скасувати</button>
+                    <button type="submit" class="btn btn-primary btn-sm">Видалити</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
